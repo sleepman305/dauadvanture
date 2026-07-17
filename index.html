@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#1c2416">
+<title>Đậu's Adventure</title>
+<style>
+  html,body{height:100%;margin:0;background:#1c2416;color:#e8d5a8;
+    font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center}
+  .box{text-align:center;padding:20px}
+  .ten{font-size:24px;font-weight:900;letter-spacing:.3px;text-shadow:0 2px 6px #000}
+  .sub{font-size:13px;opacity:.72;margin-top:10px}
+  .sp{width:26px;height:26px;margin:16px auto 0;border-radius:50%;
+    border:3px solid rgba(232,213,168,.25);border-top-color:#e8d5a8;animation:q .8s linear infinite}
+  @keyframes q{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="ten">Đậu's Adventure</div>
+  <div class="sub" id="sub">Đang kiểm tra bản mới…</div>
+  <div class="sp"></div>
+</div>
+<script>
+/* ===== TRANG NẠP — để KHÔNG phải tự bơm ?v=N nữa =====
+   VÌ SAO CẦN: GitHub Pages trả "Cache-Control: max-age=600" cho file .html. Nghĩa là trong
+   10 PHÚT sau khi push, trình duyệt dùng thẳng bản 13MB trong bộ nhớ đệm, KHÔNG hỏi lại
+   server. Đó đúng là lý do trước đây phải đổi ?v= bằng tay sau mỗi lần push.
+
+   CÁCH CHẠY: v.txt chỉ nặng vài byte và được fetch với cache:'no-store' nên LUÔN lấy bản
+   mới từ server. Lấy được số hiệu build rồi thì chuyển sang dau-adventure.html?v=<số đó>.
+   Số này CHỈ đổi khi thật sự có bản mới -> ngày thường máy vẫn xài bản 13MB đã tải,
+   không tốn dung lượng; có bản mới thì tự tải lại. User chỉ cần mở đúng địa chỉ gốc.
+
+   LƯU Ý: localStorage tính theo ORIGIN (scheme+host+port), KHÔNG theo path/query
+   -> đổi ?v= hay đi qua trang nạp này đều KHÔNG mất save của người chơi. */
+(function(){
+  var xong = false;
+  function vao(v){
+    if (xong) return; xong = true;                    // chặn gọi 2 lần (fetch xong đúng lúc hết giờ)
+    location.replace('dau-adventure.html' + (v ? '?v=' + encodeURIComponent(v) : ''));
+  }
+  fetch('v.txt?t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.ok ? r.text() : ''; })
+    .then(function(t){ vao((t || '').trim()); })
+    .catch(function(){ vao(''); });                   // mất mạng / v.txt hỏng -> vẫn vào được game
+  setTimeout(function(){                              // v.txt treo -> đừng để kẹt ở màn này
+    document.getElementById('sub').textContent = 'Đang mở game…';
+    vao('');
+  }, 4000);
+})();
+</script>
+</body>
+</html>
